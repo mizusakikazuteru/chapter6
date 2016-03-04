@@ -1,6 +1,6 @@
 package chapter6.service;
 
-import static chapter6.utils.ClosebleUtil.*;
+import static chapter6.utils.ClosebleUtil.*;//直打ちエラー
 import java.io.ByteArrayOutputStream;
 
 
