@@ -1,71 +1,105 @@
 package chapter6.service;
 
-import static chapter6.utils.ClosebleUtil.*;//直打ちエラー
+import static chapter6.utils.CloseableUtil.*;
+import static chapter6.utils.DBUtil.*;
+
 import java.io.ByteArrayOutputStream;
-
-
-import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import chapter6.beans.User;
+import chapter6.dao.UserDao;
+import chapter6.utils.CipherUtil;
+import chapter6.utils.StreamUtil;
 
-import org.apache.catalina.User;
+public class UserService {
 
-import com.mysql.jdbc.Connection;
+	public void register(User user) {
 
-/**
- * Servlet implementation class UserService
- */
-@WebServlet("/UserService")
-public class UserService extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+		Connection connection = null;
+		try {
+			connection = getConnection();
 
+			String encPassword = CipherUtil.encrypt(user.getPassword());
+			user.setPassword(encPassword);
 
-    public UserService() {
+			setDefaultIcon(user);
 
-    	public void register(User user){
+			UserDao userDao = new UserDao();
+			userDao.insert(connection, user);
 
-    		Connection conection();
-    	try{
-    		connection = getConnection();
+			commit(connection);
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
 
-    		Stirng encPassword = CipherUtil.encrypt(user.getPassword());
-    		user.setPassword(encPassword);
+	private void setDefaultIcon(User user) {
 
-    		setDefaultIcon(user);
+		InputStream is = null;
+		try {
+			long randomNum = System.currentTimeMillis() % 5;
+			String filePath = "/duke_" + randomNum + ".jpg";
+			is = UserService.class.getResourceAsStream(filePath);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			StreamUtil.copy(is, baos);
+			user.setIcon(baos.toByteArray());
+		} finally {
+			close(is);
+		}
+	}
 
-    		UserDao userDao = new UserDao();
-    		userDao.insert(connection, user);
+	public void update(User user) {
 
-    		commit(connection);
-    	}catch (RuntimeException e){
-    		rollback(connection);
-    		throw e;
-    	}finally{
-    		close(connection;)
-    	}
-    }
+		Connection connection = null;
+		try {
+			connection = getConnection();
 
- private void setDefaultIcon(User user){
+			String encPassword = CipherUtil.encrypt(user.getPassword());
+			user.setPassword(encPassword);
 
-	 InputStream is = null;
-	 try{
-		 long randomNum = System.currentTimeMills() % 5;
-		 String filePath = "/duke_" + randomNum + ".jpg";
-		 is = UserService.class.getResourceAsStream(filePath);
-		 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		 StreamUtil.copy(is, baos);
-		 user.setIcon(baos.toByteArray());
-	 }finally{
-		 close(is);
-	 }
-	 }
- }
+			UserDao userDao = new UserDao();
+			userDao.update(connection, user);
 
+			commit(connection);
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
 
+	public User getUser(int userId) {
 
+		Connection connection = null;
+		try {
+			connection = getConnection();
 
+			UserDao userDao = new UserDao();
+			User user = userDao.getUser(connection, userId);
+
+			commit(connection);
+
+			return user;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
+}
