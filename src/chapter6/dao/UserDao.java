@@ -20,6 +20,10 @@ import chapter6.utils.StreamUtil;
 
 public class UserDao {
 
+	public UserDao() {
+		System.out.println("hello");
+	}
+
 	public User getUser(Connection connection, String accountOrEmail,
 			String password) {
 
@@ -114,7 +118,7 @@ public class UserDao {
 			sql.append(", insert_date");
 			sql.append(", update_date");
 			sql.append(") VALUES (");
-			sql.append("NEXT VALUE FOR my_seq "); // id
+			sql.append("3"); // id
 			sql.append(", ?"); // account
 			sql.append(", ?"); // name
 			sql.append(", ?"); // email
