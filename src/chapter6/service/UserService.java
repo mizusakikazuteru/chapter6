@@ -4,6 +4,7 @@ import static chapter6.utils.CloseableUtil.*;
 import static chapter6.utils.DBUtil.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 
@@ -46,6 +47,10 @@ public class UserService {
 		try {
 			long randomNum = System.currentTimeMillis() % 5;
 			String filePath = "/duke_" + randomNum + ".jpg";
+			File file = new File(filePath);
+			if(file.exists()){
+				System.out.println(1);
+			}
 			is = UserService.class.getResourceAsStream(filePath);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			StreamUtil.copy(is, baos);

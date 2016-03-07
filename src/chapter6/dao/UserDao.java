@@ -32,6 +32,8 @@ public class UserDao {
 			ps.setString(2, accountOrEmail);
 			ps.setString(3, password);
 
+			System.out.println(ps.toString());
+
 			ResultSet rs = ps.executeQuery();
 			List<User> userList = toUserList(rs);
 			if (userList.isEmpty() == true) {
