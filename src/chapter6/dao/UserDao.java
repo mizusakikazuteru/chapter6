@@ -108,8 +108,9 @@ public class UserDao {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("INSERT INTO user ( ");
-			sql.append("id");
-			sql.append(", account");
+			//sql.append("id");
+			//sql.append(", account");
+			sql.append(" account");
 			sql.append(", name");
 			sql.append(", email");
 			sql.append(", password");
@@ -118,8 +119,10 @@ public class UserDao {
 			sql.append(", insert_date");
 			sql.append(", update_date");
 			sql.append(") VALUES (");
-			sql.append("3"); // id
-			sql.append(", ?"); // account
+			//sql.append("NEXT VALUE FOR my_seq "); // hsqlのオートインクリメント(Mysqlでは使用不可）
+			//sql.append("3"); // id
+			//sql.append(" ?"); // account
+			sql.append(" ?"); // account
 			sql.append(", ?"); // name
 			sql.append(", ?"); // email
 			sql.append(", ?"); // password
